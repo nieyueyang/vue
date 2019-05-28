@@ -14,7 +14,6 @@ function createLicenseDoc(){
 axios.defaults.timeout = 30*60*1000;  // 30分钟
 
 export default (url, options) => {
-  debugger
   let param = options.param||{}
   param['_R']=Math.random();
 
@@ -38,7 +37,6 @@ export default (url, options) => {
     })
       .then((resp) => {
           if(resp.data.code == 200){
-                debugger
                 resolve(resp.data);
               }else if(resp.data.code ==400){
                 //特殊状态进行处理
@@ -95,7 +93,8 @@ export const axiosGet = (url, options) => {
             url: prefixUrl + url,
             data: data,
             headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'
+                "Content-Type": "application/x-www-form-urlencoded",
+                "Authorization" : sessionStorage.getItem("Authorization")
             }
         }).then( (response)=> {
               responseHandle(response.data,resolve);

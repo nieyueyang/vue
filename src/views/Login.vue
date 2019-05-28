@@ -46,10 +46,8 @@
         this.$refs.ruleForm2.resetFields();
       },
       handleSubmit2(ev) {
-        debugger
         var _this = this;
         this.$refs.ruleForm2.validate((valid) => {
-          debugger
           if (valid) {
               axiosPost('/login', {
                   method: "POST",
@@ -57,6 +55,7 @@
               }).then((data) => {
                   debugger
                   sessionStorage.setItem('user', JSON.stringify(this.ruleForm2.account));
+                  sessionStorage.setItem('Authorization', data);
                   this.$router.push({ path: '/table' });
               }).catch()
             

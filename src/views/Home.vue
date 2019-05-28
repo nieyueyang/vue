@@ -25,7 +25,7 @@
 				<!--导航菜单-->
 				<el-menu :default-active="$route.path" class="el-menu-vertical-demo" @open="handleopen" @close="handleclose" @select="handleselect"
 					 unique-opened router v-show="!collapsed">
-					<template v-for="(item,index) in $router.options.routes" v-if="!item.hidden">
+					<template v-for="(item,index) in $data.menus" v-if="!item.hidden">
 						<el-submenu :index="index+''" v-if="!item.leaf">
 							<template slot="title"><i :class="item.iconCls"></i>{{item.name}}</template>
 							<el-menu-item v-for="child in item.children" :index="child.path" :key="child.path" v-if="!child.hidden">{{child.name}}</el-menu-item>
@@ -35,7 +35,7 @@
 				</el-menu>
 				<!--导航菜单-折叠后-->
 				<ul class="el-menu el-menu-vertical-demo collapsed" v-show="collapsed" ref="menuCollapsed">
-					<li v-for="(item,index) in $router.options.routes" v-if="!item.hidden" class="el-submenu item">
+					<li v-for="(item,index) in $data.menus" v-if="!item.hidden" class="el-submenu item">
 						<template v-if="!item.leaf">
 							<div class="el-submenu__title" style="padding-left: 20px;" @mouseover="showMenu(index,true)" @mouseout="showMenu(index,false)"><i :class="item.iconCls"></i></div>
 							<ul class="el-menu submenu" :class="'submenu-hook-'+index" @mouseover="showMenu(index,true)" @mouseout="showMenu(index,false)"> 
@@ -72,6 +72,11 @@
 </template>
 
 <script>
+
+	import {axiosGet} from '../utils/request.js';
+
+
+
 	export default {
 		data() {
 			return {
@@ -88,7 +93,13 @@
 					type: [],
 					resource: '',
 					desc: ''
-				}
+				},
+
+				menus: [
+						
+				]
+
+
 			}
 		},
 		methods: {
@@ -126,12 +137,68 @@
 			}
 		},
 		mounted() {
+			debugger
 			var user = sessionStorage.getItem('user');
 			if (user) {
 				user = JSON.parse(user);
 				this.sysUserName = user.name || '';
 				this.sysUserAvatar = user.avatar || '';
 			}
+
+			axiosGet('/menu/{}/{}', {
+					//data: {"account": this.ruleForm2.account,"password": this.ruleForm2.password}
+              	}).then((data) => {
+					debugger
+					let datas = [
+						{
+							path: '/',
+							component: "",
+							name: '导航一222',
+							iconCls: 'el-icon-message',//图标样式class
+							children: [
+								{ path: '/main',name: '主页222', hidden: true },
+								{ path: '/table',  name: 'Table222' },
+								{ path: '/form',  name: 'Form222' },
+								{ path: '/user',  name: '列表222' },
+							]
+						},
+						{
+							path: '/',
+							component: "",
+							name: '导航二',
+							iconCls: 'fa fa-id-card-o',
+							children: [
+								{ path: '/page4', name: '页面4' },
+								{ path: '/page5', name: '页面5' }
+							]
+						},
+						{
+							path: '/',
+							component: "",
+							name: '',
+							iconCls: 'fa fa-address-card',
+							leaf: true,//只有一个节点
+							children: [
+								{ path: '/page6',  name: '导航三' }
+							]
+						},
+						{
+							path: '/',
+							component: "",
+							name: 'Charts',
+							iconCls: 'fa fa-bar-chart',
+							children: [
+								{ path: '/echarts',  name: 'echarts' }
+							]
+						},
+						{
+							path: '*',
+							hidden: true,
+							redirect: { path: '/404' }
+						}
+				]
+					data.menus = datas;
+              	}).catch()
 
 		}
 	}

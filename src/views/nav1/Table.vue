@@ -184,10 +184,10 @@
 				// });
 
 				debugger
-				axiosGet('/login', {
-					data: {"account": this.ruleForm2.account,"password": this.ruleForm2.password}
+				axiosGet('/menu/{}/{}', {
+					//data: {"account": this.ruleForm2.account,"password": this.ruleForm2.password}
               	}).then((data) => {
-
+					debugger
 					this.$router.push({ path: '/table' });
               	}).catch()
 
@@ -308,7 +308,7 @@
 		},
 		
 		mounted() {
-			this.getUsers();
+			//this.getUsers();
 		}
 	}
 
