@@ -9,7 +9,7 @@ import Vuex from 'vuex'
 import routes from './routes'
 
 //使用Mock是开启
-//import Mock from './mock'
+//1import Mock from './mock'
 //Mock.bootstrap();
 
 import 'font-awesome/css/font-awesome.min.css'
