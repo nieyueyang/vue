@@ -10,6 +10,8 @@ import Page5 from './views/nav2/Page5.vue'
 import Page6 from './views/nav3/Page6.vue'
 import echarts from './views/charts/echarts.vue'
 
+import Menu from "./views/menu-manager/index.vue"
+
 let routes = [
     {
         path: '/login',
@@ -25,7 +27,7 @@ let routes = [
     },
     //{ path: '/main', component: Main },
     {
-        path: '/',
+        path: '',
         component: Home,
         name: '导航一',
         iconCls: 'el-icon-message',//图标样式class
@@ -34,10 +36,11 @@ let routes = [
             { path: '/table', component: Table, name: 'Table' },
             { path: '/form', component: Form, name: 'Form' },
             { path: '/user', component: user, name: '列表' },
+            { path: '/menu', component: Menu, name: '菜单管理111' },
         ]
     },
     {
-        path: '/',
+        path: '',
         component: Home,
         name: '导航二',
         iconCls: 'fa fa-id-card-o',
@@ -47,7 +50,7 @@ let routes = [
         ]
     },
     {
-        path: '/',
+        path: '',
         component: Home,
         name: '',
         iconCls: 'fa fa-address-card',
@@ -57,7 +60,7 @@ let routes = [
         ]
     },
     {
-        path: '/',
+        path: '',
         component: Home,
         name: 'Charts',
         iconCls: 'fa fa-bar-chart',

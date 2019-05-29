@@ -115,4 +115,6 @@ function responseHandle(data,resolve){
       vue.$message({type: 'warning', message:  data.msg})
      
   }
+
+  
 }

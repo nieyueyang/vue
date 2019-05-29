@@ -25,26 +25,30 @@
 				<!--导航菜单-->
 				<el-menu :default-active="$route.path" class="el-menu-vertical-demo" @open="handleopen" @close="handleclose" @select="handleselect"
 					 unique-opened router v-show="!collapsed">
-					<template v-for="(item,index) in $data.menus" v-if="!item.hidden">
+					<template v-for="(item,index) in  $data.menus" v-if="!item.hidden">
 						<el-submenu :index="index+''" v-if="!item.leaf">
-							<template slot="title"><i :class="item.iconCls"></i>{{item.name}}</template>
-							<el-menu-item v-for="child in item.children" :index="child.path" :key="child.path" v-if="!child.hidden">{{child.name}}</el-menu-item>
+							<template slot="title"><i :class="item.icon"></i>{{item.menuName}}</template>
+							<el-menu-item v-for="(child,key) in item.children" :index="child.path" :key="key" v-if="!child.hidden">{{child.menuName}}</el-menu-item>
 						</el-submenu>
-						<el-menu-item v-if="item.leaf&&item.children.length>0" :index="item.children[0].path"><i :class="item.iconCls"></i>{{item.children[0].name}}</el-menu-item>
+						<!-- <el-menu-item v-if="item.leaf&&item.children.length>0" :index="item.children[0].path"><i :class="item.icon"></i>{{item.children[0].menuName}}</el-menu-item> -->
+						<el-menu-item :index="item.children[0].path" v-else>
+                    		{{item.children[0].menuName}}
+                		</el-menu-item>
+
 					</template>
 				</el-menu>
 				<!--导航菜单-折叠后-->
 				<ul class="el-menu el-menu-vertical-demo collapsed" v-show="collapsed" ref="menuCollapsed">
-					<li v-for="(item,index) in $data.menus" v-if="!item.hidden" class="el-submenu item">
+					<li v-for="(item,index) in  $data.menus" v-if="!item.hidden" class="el-submenu item">
 						<template v-if="!item.leaf">
-							<div class="el-submenu__title" style="padding-left: 20px;" @mouseover="showMenu(index,true)" @mouseout="showMenu(index,false)"><i :class="item.iconCls"></i></div>
+							<div class="el-submenu__title" style="padding-left: 20px;" @mouseover="showMenu(index,true)" @mouseout="showMenu(index,false)"><i :class="item.icon"></i></div>
 							<ul class="el-menu submenu" :class="'submenu-hook-'+index" @mouseover="showMenu(index,true)" @mouseout="showMenu(index,false)"> 
-								<li v-for="child in item.children" v-if="!child.hidden" :key="child.path" class="el-menu-item" style="padding-left: 40px;" :class="$route.path==child.path?'is-active':''" @click="$router.push(child.path)">{{child.name}}</li>
+								<li v-for="(child,key) in item.children" v-if="!child.hidden" :key="key" class="el-menu-item" style="padding-left: 40px;" :class="$route.path==child.path?'is-active':''" @click="$router.push(child.path)">{{child.menuName}}</li>
 							</ul>
 						</template>
 						<template v-else>
 							<li class="el-submenu">
-								<div class="el-submenu__title el-menu-item" style="padding-left: 20px;height: 56px;line-height: 56px;padding: 0 20px;" :class="$route.path==item.children[0].path?'is-active':''" @click="$router.push(item.children[0].path)"><i :class="item.iconCls"></i></div>
+								<div class="el-submenu__title el-menu-item" style="padding-left: 20px;height: 56px;line-height: 56px;padding: 0 20px;" :class="$route.path==item.children[0].path?'is-active':''" @click="$router.push(item.children[0].path)"><i :class="item.icon"></i></div>
 							</li>
 						</template>
 					</li>
@@ -75,31 +79,24 @@
 
 	import {axiosGet} from '../utils/request.js';
 
-
-
 	export default {
 		data() {
 			return {
-				sysName:'VUEADMIN',
+				sysName:"VUEADMIN1111",
 				collapsed:false,
-				sysUserName: '',
-				sysUserAvatar: '',
+				sysUserName: "",
+				sysUserAvatar: "",
 				form: {
-					name: '',
-					region: '',
-					date1: '',
-					date2: '',
+					name: "",
+					region: "",
+					date1: "",
+					date2: "",
 					delivery: false,
 					type: [],
-					resource: '',
-					desc: ''
+					resource: "",
+					desc: ""
 				},
-
-				menus: [
-						
-				]
-
-
+				menus: []
 			}
 		},
 		methods: {
@@ -126,18 +123,18 @@
 
 				});
 
-
 			},
 			//折叠导航栏
 			collapse:function(){
+				debugger
 				this.collapsed=!this.collapsed;
 			},
 			showMenu(i,status){
+				debugger
 				this.$refs.menuCollapsed.getElementsByClassName('submenu-hook-'+i)[0].style.display=status?'block':'none';
 			}
 		},
 		mounted() {
-			debugger
 			var user = sessionStorage.getItem('user');
 			if (user) {
 				user = JSON.parse(user);
@@ -148,56 +145,7 @@
 			axiosGet('/menu/{}/{}', {
 					//data: {"account": this.ruleForm2.account,"password": this.ruleForm2.password}
               	}).then((data) => {
-					debugger
-					let datas = [
-						{
-							path: '/',
-							component: "",
-							name: '导航一222',
-							iconCls: 'el-icon-message',//图标样式class
-							children: [
-								{ path: '/main',name: '主页222', hidden: true },
-								{ path: '/table',  name: 'Table222' },
-								{ path: '/form',  name: 'Form222' },
-								{ path: '/user',  name: '列表222' },
-							]
-						},
-						{
-							path: '/',
-							component: "",
-							name: '导航二',
-							iconCls: 'fa fa-id-card-o',
-							children: [
-								{ path: '/page4', name: '页面4' },
-								{ path: '/page5', name: '页面5' }
-							]
-						},
-						{
-							path: '/',
-							component: "",
-							name: '',
-							iconCls: 'fa fa-address-card',
-							leaf: true,//只有一个节点
-							children: [
-								{ path: '/page6',  name: '导航三' }
-							]
-						},
-						{
-							path: '/',
-							component: "",
-							name: 'Charts',
-							iconCls: 'fa fa-bar-chart',
-							children: [
-								{ path: '/echarts',  name: 'echarts' }
-							]
-						},
-						{
-							path: '*',
-							hidden: true,
-							redirect: { path: '/404' }
-						}
-				]
-					data.menus = datas;
+					this.menus = data;
               	}).catch()
 
 		}
