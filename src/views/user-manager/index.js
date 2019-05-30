@@ -9,7 +9,7 @@ import {axiosGet} from '../../utils/request.js';
 				filters: {
 					name: ''
 				},
-				menu: [],
+				users: [],
 				total: 0,
 				page: 1,
 				listLoading: false,
@@ -52,15 +52,15 @@ import {axiosGet} from '../../utils/request.js';
 		},
 		methods: {
 			//性别显示转换
-			formatMenuType: function (row, column) {
-				return row.menuType == 1 ? '菜单1' : row.menuType == 0 ? '菜单0' : '未知';
+			formatSex: function (row, column) {
+				return row.sex == 0 ? '男' : row.sex == 1 ? '女' : '未知';
 			},
 			handleCurrentChange(val) {
 				this.page = val;
-				this.getMenu();
+				this.getUsers();
 			},
 			//获取用户列表
-			getMenu() {
+			getUsers() {
 				//this.$message(sessionStorage.getItem("user"));
 				let para = {
 					page: this.page,
@@ -74,12 +74,11 @@ import {axiosGet} from '../../utils/request.js';
 				// 	this.listLoading = false;
 				// 	//NProgress.done();
 				// });
-                debugger
-                  axiosGet('/menu/{}/{}', {
+                  axiosGet('/user/1/20', {
 					//data: {"account": this.ruleForm2.account,"password": this.ruleForm2.password}
               	}).then((data) => {
                     debugger
-                    this.menu = data;
+                    this.users = data.list;
                     
               	}).catch()
 
@@ -102,7 +101,7 @@ import {axiosGet} from '../../utils/request.js';
 							message: '删除成功',
 							type: 'success'
 						});
-						this.getMenu();
+						this.getUsers();
 					});
 				}).catch(() => {
 
@@ -142,7 +141,7 @@ import {axiosGet} from '../../utils/request.js';
 								});
 								this.$refs['editForm'].resetFields();
 								this.editFormVisible = false;
-								this.getMenu();
+								this.getUsers();
 							});
 						});
 					}
@@ -166,7 +165,7 @@ import {axiosGet} from '../../utils/request.js';
 								});
 								this.$refs['addForm'].resetFields();
 								this.addFormVisible = false;
-								this.getMenu();
+								this.getUsers();
 							});
 						});
 					}
@@ -191,7 +190,7 @@ import {axiosGet} from '../../utils/request.js';
 							message: '删除成功',
 							type: 'success'
 						});
-						this.getMenu();
+						this.getUsers();
 					});
 				}).catch(() => {
 
@@ -200,6 +199,6 @@ import {axiosGet} from '../../utils/request.js';
 		},
 		
 		mounted() {
-			this.getMenu();
+			this.getUsers();
 		}
 	}

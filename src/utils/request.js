@@ -69,7 +69,8 @@ export const axiosPost = (url, options) => {
                 ...options.data
               }),
               headers: {
-                  'Content-Type': 'application/x-www-form-urlencoded'
+                  'Content-Type': 'application/x-www-form-urlencoded',
+                  "Authorization" : sessionStorage.getItem("Authorization")
               }
               
           }).then( (response)=> {
@@ -86,7 +87,6 @@ export const axiosGet = (url, options) => {
   param['_R']=Math.random();
   let data = {}
   data = qs.stringify(options.data)
-
   return new Promise((resolve) => {
         axios({
             method:"get",

@@ -9,7 +9,7 @@
 					<el-input v-model="filters.name" placeholder="姓名"></el-input>
 				</el-form-item>
 				<el-form-item>
-					<el-button type="primary" v-on:click="getMenu">查询</el-button>
+					<el-button type="primary" v-on:click="getRole">查询</el-button>
 				</el-form-item>
 				<el-form-item>
 					<el-button type="primary" @click="handleAdd">新增</el-button>
@@ -18,16 +18,17 @@
 		</el-col>
 
 		<!--列表-->
-		<el-table :data="menu" highlight-current-row v-loading="listLoading" @selection-change="selsChange" style="width: 100%;">
+		<el-table :data="role" highlight-current-row v-loading="listLoading" @selection-change="selsChange" style="width: 100%;">
 			<el-table-column type="selection" width="55"></el-table-column>
 			<el-table-column type="index" width="60"></el-table-column>
-			<el-table-column prop="menuCode" label="菜单编码" width="120" sortable></el-table-column>
-			<el-table-column prop="menuName" label="菜单名称" width="150" sortable></el-table-column>
-			<el-table-column prop="menuType" label="菜单类型" width="120" :formatter="formatMenuType" sortable></el-table-column>
-			<el-table-column prop="path" label="URL" width="150" sortable></el-table-column>
-			<el-table-column prop="sort" label="排序" width="100" sortable></el-table-column>
-			<el-table-column prop="icon" label="图标" min-width="100" sortable></el-table-column>
-			<el-table-column prop="remark" label="备注" min-width="180" sortable></el-table-column>
+			<el-table-column prop="id" label="id" width="80" sortable></el-table-column>
+			<el-table-column prop="roleCode" label="角色编码" width="120" sortable></el-table-column>
+			<el-table-column prop="roleName" label="角色名称" width="150" sortable></el-table-column>
+			<el-table-column prop="roleType" label="角色类别" width="120" sortable></el-table-column>
+			<el-table-column prop="isactive" label="是否启用" width="150" sortable></el-table-column>
+			<el-table-column prop="createAccount" label="创建人编码" min-width="180" sortable></el-table-column>
+			<el-table-column prop="createName" label="创建人" min-width="180" sortable></el-table-column>
+			<el-table-column prop="createDate" label="创建时间" min-width="180" sortable></el-table-column>
 			<el-table-column label="操作" width="150">
 				<template scope="scope">
 					<el-button size="small" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
@@ -81,23 +82,24 @@
 		<!--新增界面-->
 		<el-dialog title="新增" v-model="addFormVisible" :close-on-click-modal="false">
 			<el-form :model="addForm" label-width="80px" :rules="addFormRules" ref="addForm">
-				<el-form-item label="姓名" prop="name">
-					<el-input v-model="addForm.name" auto-complete="off"></el-input>
+				<el-form-item label="角色编码" prop="roleCode">
+					<el-input v-model="addForm.roleCode" auto-complete="off"></el-input>
 				</el-form-item>
-				<el-form-item label="性别">
-					<el-radio-group v-model="addForm.sex">
-						<el-radio class="radio" :label="1">男</el-radio>
-						<el-radio class="radio" :label="0">女</el-radio>
+				<el-form-item label="角色名称" prop="roleName">
+					<el-input v-model="addForm.roleName" auto-complete="off"></el-input>
+				</el-form-item>
+				<el-form-item label="角色类型">
+					<el-select v-model="addForm.roleType" placeholder="请选择角色类型">
+						<el-option label="业务类" value="0"></el-option>
+						<el-option label="管理类" value="1"></el-option>
+						<el-option label="审计类" value="2"></el-option>
+					</el-select>
+				</el-form-item>
+					<el-form-item label="是否启用">
+					<el-radio-group v-model="addForm.isactive">
+						<el-radio class="radio" :label="0">启用</el-radio>
+						<el-radio class="radio" :label="1">停用</el-radio>
 					</el-radio-group>
-				</el-form-item>
-				<el-form-item label="年龄">
-					<el-input-number v-model="addForm.age" :min="0" :max="200"></el-input-number>
-				</el-form-item>
-				<el-form-item label="生日">
-					<el-date-picker type="date" placeholder="选择日期" v-model="addForm.birth"></el-date-picker>
-				</el-form-item>
-				<el-form-item label="地址">
-					<el-input type="textarea" v-model="addForm.addr"></el-input>
 				</el-form-item>
 			</el-form>
 			<div slot="footer" class="dialog-footer">

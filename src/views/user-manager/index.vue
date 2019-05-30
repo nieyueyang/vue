@@ -9,7 +9,7 @@
 					<el-input v-model="filters.name" placeholder="姓名"></el-input>
 				</el-form-item>
 				<el-form-item>
-					<el-button type="primary" v-on:click="getMenu">查询</el-button>
+					<el-button type="primary" v-on:click="getUsers">查询</el-button>
 				</el-form-item>
 				<el-form-item>
 					<el-button type="primary" @click="handleAdd">新增</el-button>
@@ -18,16 +18,22 @@
 		</el-col>
 
 		<!--列表-->
-		<el-table :data="menu" highlight-current-row v-loading="listLoading" @selection-change="selsChange" style="width: 100%;">
+		<el-table :data="users" highlight-current-row v-loading="listLoading" @selection-change="selsChange" style="width: 100%;">
 			<el-table-column type="selection" width="55"></el-table-column>
 			<el-table-column type="index" width="60"></el-table-column>
-			<el-table-column prop="menuCode" label="菜单编码" width="120" sortable></el-table-column>
-			<el-table-column prop="menuName" label="菜单名称" width="150" sortable></el-table-column>
-			<el-table-column prop="menuType" label="菜单类型" width="120" :formatter="formatMenuType" sortable></el-table-column>
-			<el-table-column prop="path" label="URL" width="150" sortable></el-table-column>
-			<el-table-column prop="sort" label="排序" width="100" sortable></el-table-column>
-			<el-table-column prop="icon" label="图标" min-width="100" sortable></el-table-column>
-			<el-table-column prop="remark" label="备注" min-width="180" sortable></el-table-column>
+			<el-table-column prop="id" label="id" width="80" sortable></el-table-column>
+			<el-table-column prop="account" label="用户账号" width="120" sortable></el-table-column>
+			<el-table-column prop="name" label="名称" width="150" sortable></el-table-column>
+			<el-table-column prop="salt" label="盐" width="120" sortable></el-table-column>
+			<el-table-column prop="parentId" label="上级ID" width="150" sortable></el-table-column>
+			<el-table-column prop="sex" label="性别" width="100" :formatter="formatSex" sortable></el-table-column>
+			<el-table-column prop="phone" label="电话" min-width="100" sortable></el-table-column>
+			<el-table-column prop="email" label="电子邮箱" min-width="100" sortable></el-table-column>
+			<el-table-column prop="companyId" label="公司" min-width="100" sortable></el-table-column>
+			<el-table-column prop="source" label="来源" min-width="180" sortable></el-table-column>
+			<el-table-column prop="createAccount" label="创建人编码" min-width="180" sortable></el-table-column>
+			<el-table-column prop="createName" label="创建人" min-width="180" sortable></el-table-column>
+			<el-table-column prop="createDate" label="创建时间" min-width="180" sortable></el-table-column>
 			<el-table-column label="操作" width="150">
 				<template scope="scope">
 					<el-button size="small" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>

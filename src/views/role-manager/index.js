@@ -2,6 +2,7 @@ import util from '../../common/js/util'
 	//import NProgress from 'nprogress'
 import { getUserListPage, removeUser, batchRemoveUser, editUser, addUser } from '../../api/api';
 import {axiosGet} from '../../utils/request.js';
+import {axiosPost} from '../../utils/request.js';
 
 	export default {
 		data() {
@@ -9,7 +10,7 @@ import {axiosGet} from '../../utils/request.js';
 				filters: {
 					name: ''
 				},
-				menu: [],
+				role: [],
 				total: 0,
 				page: 1,
 				listLoading: false,
@@ -52,15 +53,15 @@ import {axiosGet} from '../../utils/request.js';
 		},
 		methods: {
 			//性别显示转换
-			formatMenuType: function (row, column) {
-				return row.menuType == 1 ? '菜单1' : row.menuType == 0 ? '菜单0' : '未知';
+			formatSex: function (row, column) {
+				return row.sex == 0 ? '男' : row.sex == 1 ? '女' : '未知';
 			},
 			handleCurrentChange(val) {
 				this.page = val;
-				this.getMenu();
+				this.getRole();
 			},
 			//获取用户列表
-			getMenu() {
+			getRole() {
 				//this.$message(sessionStorage.getItem("user"));
 				let para = {
 					page: this.page,
@@ -74,12 +75,11 @@ import {axiosGet} from '../../utils/request.js';
 				// 	this.listLoading = false;
 				// 	//NProgress.done();
 				// });
-                debugger
-                  axiosGet('/menu/{}/{}', {
+                  axiosGet('/role/1', {
 					//data: {"account": this.ruleForm2.account,"password": this.ruleForm2.password}
               	}).then((data) => {
                     debugger
-                    this.menu = data;
+                    this.role = data.list;
                     
               	}).catch()
 
@@ -102,7 +102,7 @@ import {axiosGet} from '../../utils/request.js';
 							message: '删除成功',
 							type: 'success'
 						});
-						this.getMenu();
+						this.getRole();
 					});
 				}).catch(() => {
 
@@ -116,13 +116,7 @@ import {axiosGet} from '../../utils/request.js';
 			//显示新增界面
 			handleAdd: function () {
 				this.addFormVisible = true;
-				this.addForm = {
-					name: '',
-					sex: -1,
-					age: 0,
-					birth: '',
-					addr: ''
-				};
+				this.addForm = {};
 			},
 			//编辑
 			editSubmit: function () {
@@ -132,7 +126,7 @@ import {axiosGet} from '../../utils/request.js';
 							this.editLoading = true;
 							//NProgress.start();
 							let para = Object.assign({}, this.editForm);
-							para.birth = (!para.birth || para.birth == '') ? '' : util.formatDate.format(new Date(para.birth), 'yyyy-MM-dd');
+							//para.birth = (!para.birth || para.birth == '') ? '' : util.formatDate.format(new Date(para.birth), 'yyyy-MM-dd');
 							editUser(para).then((res) => {
 								this.editLoading = false;
 								//NProgress.done();
@@ -142,7 +136,7 @@ import {axiosGet} from '../../utils/request.js';
 								});
 								this.$refs['editForm'].resetFields();
 								this.editFormVisible = false;
-								this.getMenu();
+								this.getRole();
 							});
 						});
 					}
@@ -152,22 +146,21 @@ import {axiosGet} from '../../utils/request.js';
 			addSubmit: function () {
 				this.$refs.addForm.validate((valid) => {
 					if (valid) {
-						this.$confirm('确认提交吗？', '提示', {}).then(() => {
+						this.$confirm('确认提交吗111？', '提示', {}).then(() => {
 							this.addLoading = true;
 							//NProgress.start();
 							let para = Object.assign({}, this.addForm);
-							para.birth = (!para.birth || para.birth == '') ? '' : util.formatDate.format(new Date(para.birth), 'yyyy-MM-dd');
-							addUser(para).then((res) => {
-								this.addLoading = false;
-								//NProgress.done();
-								this.$message({
-									message: '提交成功',
-									type: 'success'
-								});
-								this.$refs['addForm'].resetFields();
-								this.addFormVisible = false;
-								this.getMenu();
-							});
+							debugger
+							//para.birth = (!para.birth || para.birth == '') ? '' : util.formatDate.format(new Date(para.birth), 'yyyy-MM-dd');
+							axiosPost('/role', {
+								data: para
+							}).then((data) => {
+								debugger
+								sessionStorage.setItem('user', JSON.stringify(this.ruleForm2.account));
+								sessionStorage.setItem('Authorization', data);
+								this.$router.push({ path: '/table' });
+							}).catch()
+
 						});
 					}
 				});
@@ -191,7 +184,7 @@ import {axiosGet} from '../../utils/request.js';
 							message: '删除成功',
 							type: 'success'
 						});
-						this.getMenu();
+						this.getRole();
 					});
 				}).catch(() => {
 
@@ -200,6 +193,6 @@ import {axiosGet} from '../../utils/request.js';
 		},
 		
 		mounted() {
-			this.getMenu();
+			this.getRole();
 		}
 	}

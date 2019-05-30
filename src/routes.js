@@ -4,13 +4,15 @@ import Home from './views/Home.vue'
 import Main from './views/Main.vue'
 import Table from './views/nav1/Table.vue'
 import Form from './views/nav1/Form.vue'
-import user from './views/nav1/user.vue'
+//import user from './views/nav1/user.vue'
 import Page4 from './views/nav2/Page4.vue'
 import Page5 from './views/nav2/Page5.vue'
 import Page6 from './views/nav3/Page6.vue'
 import echarts from './views/charts/echarts.vue'
 
 import Menu from "./views/menu-manager/index.vue"
+import User from "./views/user-manager/index.vue"
+import Role from "./views/role-manager/index.vue"
 
 let routes = [
     {
@@ -35,8 +37,9 @@ let routes = [
             { path: '/main', component: Main, name: '主页', hidden: true },
             { path: '/table', component: Table, name: 'Table' },
             { path: '/form', component: Form, name: 'Form' },
-            { path: '/user', component: user, name: '列表' },
             { path: '/menu', component: Menu, name: '菜单管理111' },
+            { path: '/user', component: User, name: '用户管理' },
+            { path: '/role', component: Role, name: '角色管理' },
         ]
     },
     {
