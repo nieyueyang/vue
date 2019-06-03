@@ -19,6 +19,7 @@ export default (url, options) => {
 
   return new Promise((resolve) => {
     let data = {}
+   
     if (options.formatJSon) {
       data = options.data
     } else {
@@ -35,16 +36,8 @@ export default (url, options) => {
         'X-Requested-With': 'XMLHttpRequest'
       }
     })
-      .then((resp) => {
-          if(resp.data.code == 200){
-                resolve(resp.data);
-              }else if(resp.data.code ==400){
-                //特殊状态进行处理
-                resolve(resp.data);
-              }else{
-                //给出提示
-          }
-
+      .then((response) => {
+        responseHandle(response.data,resolve);
       })
       .catch((param) => {
         // if (param.response.status == 306) {
@@ -61,18 +54,23 @@ export default (url, options) => {
 
 
 export const axiosPost = (url, options) => {
+    let data = {}
+    debugger
+    if (options.formatJSon) {
+      data = options.data
+    } else {
+      data = qs.stringify(options.data)
+    }
+
     return new Promise((resolve) => {
           axios({
               method:"post",
               url: prefixUrl + url,
-              data:qs.stringify({
-                ...options.data
-              }),
-              headers: {
-                  'Content-Type': 'application/x-www-form-urlencoded',
-                  "Authorization" : sessionStorage.getItem("Authorization")
+              data : data,
+              headers: options.formatJSon ? options.headers : {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-Requested-With': 'XMLHttpRequest'
               }
-              
           }).then( (response)=> {
                 responseHandle(response.data,resolve);
             }).catch(function (error){
@@ -83,6 +81,7 @@ export const axiosPost = (url, options) => {
 
 
 export const axiosGet = (url, options) => {
+  debugger
   let param = options.param||{}
   param['_R']=Math.random();
   let data = {}
@@ -94,7 +93,6 @@ export const axiosGet = (url, options) => {
             data: data,
             headers: {
                 "Content-Type": "application/x-www-form-urlencoded",
-                "Authorization" : sessionStorage.getItem("Authorization")
             }
         }).then( (response)=> {
               responseHandle(response.data,resolve);

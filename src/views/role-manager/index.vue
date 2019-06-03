@@ -6,7 +6,10 @@
 		<el-col :span="24" class="toolbar" style="padding-bottom: 0px;">
 			<el-form :inline="true" :model="filters">
 				<el-form-item>
-					<el-input v-model="filters.name" placeholder="姓名"></el-input>
+					<el-input v-model="filters.roleCode" placeholder="角色编码"></el-input>
+				</el-form-item>
+				<el-form-item>
+					<el-input v-model="filters.roleName" placeholder="角色名称"></el-input>
 				</el-form-item>
 				<el-form-item>
 					<el-button type="primary" v-on:click="getRole">查询</el-button>
@@ -21,15 +24,15 @@
 		<el-table :data="role" highlight-current-row v-loading="listLoading" @selection-change="selsChange" style="width: 100%;">
 			<el-table-column type="selection" width="55"></el-table-column>
 			<el-table-column type="index" width="60"></el-table-column>
-			<el-table-column prop="id" label="id" width="80" sortable></el-table-column>
-			<el-table-column prop="roleCode" label="角色编码" width="120" sortable></el-table-column>
-			<el-table-column prop="roleName" label="角色名称" width="150" sortable></el-table-column>
-			<el-table-column prop="roleType" label="角色类别" width="120" sortable></el-table-column>
-			<el-table-column prop="isactive" label="是否启用" width="150" sortable></el-table-column>
-			<el-table-column prop="createAccount" label="创建人编码" min-width="180" sortable></el-table-column>
-			<el-table-column prop="createName" label="创建人" min-width="180" sortable></el-table-column>
-			<el-table-column prop="createDate" label="创建时间" min-width="180" sortable></el-table-column>
-			<el-table-column label="操作" width="150">
+			<el-table-column key="1" prop="id" label="id" v-if="false"  width="80" sortable></el-table-column>
+			<el-table-column key="2" prop="roleCode" label="角色编码" width="120" sortable></el-table-column>
+			<el-table-column key="3" prop="roleName" label="角色名称" width="150" sortable></el-table-column>
+			<el-table-column key="4" prop="roleType" label="角色类别" width="120" sortable></el-table-column>
+			<el-table-column key="5" prop="isactive" label="是否启用" width="150" sortable></el-table-column>
+			<el-table-column key="6" prop="createAccount" label="创建人编码" min-width="180" sortable></el-table-column>
+			<el-table-column key="7" prop="createName" label="创建人" min-width="180" sortable></el-table-column>
+			<el-table-column key="8" prop="createDate" label="创建时间" :formatter="dateFormat"  min-width="180" sortable></el-table-column>
+			<el-table-column key="9" label="操作" width="150">
 				<template scope="scope">
 					<el-button size="small" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
 					<el-button type="danger" size="small" @click="handleDel(scope.$index, scope.row)">删除</el-button>
@@ -37,12 +40,25 @@
 			</el-table-column>
 		</el-table>
 
+		<el-pagination background
+			@size-change="handleSizeChange" 
+			@current-change="handleCurrentChange"  
+			layout="prev, pager, next,jumper,sizes,total"
+			:current-page="pageNum"  
+			:page-sizes="[10,20,50,100]"
+			:page-size="pageSize"
+			:total= "total" 
+			style="float:right;">
+    	</el-pagination>
+
+
 		<!--工具条-->
-		<el-col :span="24" class="toolbar">
-			<el-button type="danger" @click="batchRemove" :disabled="this.sels.length===0">批量删除</el-button>
-			<el-pagination layout="prev, pager, next" @current-change="handleCurrentChange" :page-size="20" :total="total" style="float:right;">
-			</el-pagination>
-		</el-col>
+
+			<!-- <el-button type="danger" @click="batchRemove" :disabled="this.sels.length===0">批量删除</el-button> -->
+			<!-- <el-pagination layout="prev, pager, next"
+						   @current-change="handleCurrentChange" :page-size="20" :total="total" style="float:right;">
+			</el-pagination> -->
+
 
 		<!--编辑界面-->
 		<el-dialog title="编辑" v-model="editFormVisible" :close-on-click-modal="false">

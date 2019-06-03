@@ -1,18 +1,18 @@
-import util from '../../common/js/util'
-	//import NProgress from 'nprogress'
-import { getUserListPage, removeUser, batchRemoveUser, editUser, addUser } from '../../api/api';
+import util from '../../common/js/Utils/util'
 import {axiosGet} from '../../utils/request.js';
-import {axiosPost} from '../../utils/request.js';
+import request from '../../utils/request.js';
 
 	export default {
 		data() {
 			return {
 				filters: {
-					name: ''
+					roleCode: "",
+					roleName:""
 				},
 				role: [],
 				total: 0,
-				page: 1,
+				pageNum : "",
+				pageSize: "", 
 				listLoading: false,
 				sels: [],//列表选中列
 
@@ -56,37 +56,45 @@ import {axiosPost} from '../../utils/request.js';
 			formatSex: function (row, column) {
 				return row.sex == 0 ? '男' : row.sex == 1 ? '女' : '未知';
 			},
-			handleCurrentChange(val) {
-				this.page = val;
-				this.getRole();
+			//日期格式化
+			dateFormat: function(row, column){
+				var date = row[column.property];
+				if (date === undefined) {
+				  return "";
+				}
+				//return util.formatDate.format(new Date(date), 'yyyy-MM-dd hh:mm:ss');
+				return util.formatDate.format(new Date(date), 'yyyy-MM-dd');
 			},
 			//获取用户列表
 			getRole() {
-				//this.$message(sessionStorage.getItem("user"));
-				let para = {
-					page: this.page,
-					name: this.filters.name
-				};
 				this.listLoading = true;
-				//NProgress.start();
-				// getUserListPage(para).then((res) => {
-				// 	this.total = res.data.total;
-				// 	this.users = res.data.users;
-				// 	this.listLoading = false;
-				// 	//NProgress.done();
-				// });
-                  axiosGet('/role/1', {
-					//data: {"account": this.ruleForm2.account,"password": this.ruleForm2.password}
-              	}).then((data) => {
-                    debugger
-                    this.role = data.list;
-                    
-              	}).catch()
+				debugger
+				request("/role/selectForPage", {
+					method: "POST",
+					formatJSon: true,
+					data: {"roleCode": this.filters.roleCode,"roleName": this.filters.roleName,"pageNum": this.pageNum,"pageSize": this.pageSize}
+				}).then((data) => {
+					debugger
+					this.role = data.list;
+					this.total = data.total;
+					this.pageNum = data.pageNum;
+					this.pageSize = data.pageSize;
+				}).catch(() => {
 
-                  this.listLoading = false;
+				});
 
-
+				this.listLoading = false;
 			},
+
+
+					///分页    初始页currentPage、初始每页数据数pagesize
+			handleSizeChange:function(size){
+				this.pagesize=size;
+			},
+			handleCurrentChange:function(pageNum){
+				this.pageNum=pageNum;
+				this.getRole();
+			},	
 			//删除
 			handleDel: function (index, row) {
 				this.$confirm('确认删除该记录吗?', '提示', {
@@ -146,26 +154,29 @@ import {axiosPost} from '../../utils/request.js';
 			addSubmit: function () {
 				this.$refs.addForm.validate((valid) => {
 					if (valid) {
-						this.$confirm('确认提交吗111？', '提示', {}).then(() => {
+						this.$confirm('确认提交吗？', '提示', {}).then(() => {
 							this.addLoading = true;
-							//NProgress.start();
 							let para = Object.assign({}, this.addForm);
-							debugger
 							//para.birth = (!para.birth || para.birth == '') ? '' : util.formatDate.format(new Date(para.birth), 'yyyy-MM-dd');
 							axiosPost('/role', {
-								data: para
+								data: para,
+								formatJSon: true,
+								headers: {
+									'Content-Type':'application/json'
+								}
 							}).then((data) => {
 								debugger
-								sessionStorage.setItem('user', JSON.stringify(this.ruleForm2.account));
-								sessionStorage.setItem('Authorization', data);
-								this.$router.push({ path: '/table' });
-							}).catch()
+								this.getRole();
+							}).catch(
+								this.addLoading = false
+								)
 
 						});
 					}
 				});
 			},
 			selsChange: function (sels) {
+				debugger
 				this.sels = sels;
 			},
 			//批量删除

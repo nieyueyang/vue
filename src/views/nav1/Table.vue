@@ -105,7 +105,7 @@
 </template>
 
 <script>
-	import util from '../../common/js/util'
+	import util from '../../common/js/Utils/util'
 	//import NProgress from 'nprogress'
 	import { getUserListPage, removeUser, batchRemoveUser, editUser, addUser } from '../../api/api';
 	import axiosGet from '../../utils/request.js';
@@ -175,22 +175,15 @@
 					name: this.filters.name
 				};
 				this.listLoading = true;
-				//NProgress.start();
-				// getUserListPage(para).then((res) => {
-				// 	this.total = res.data.total;
-				// 	this.users = res.data.users;
-				// 	this.listLoading = false;
-				// 	//NProgress.done();
-				// });
-
-				debugger
 				axiosGet('/menu/{}/{}', {
 					//data: {"account": this.ruleForm2.account,"password": this.ruleForm2.password}
               	}).then((data) => {
 					debugger
 					this.$router.push({ path: '/table' });
-              	}).catch()
+              	}).catch(() => {
 
+				});
+				this.listLoading = false;
 
 
 
