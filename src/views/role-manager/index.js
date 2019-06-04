@@ -11,8 +11,8 @@ import request from '../../utils/request.js';
 				},
 				role: [],
 				total: 0,
-				pageNum : "",
-				pageSize: "", 
+				pageNum : 0,
+				pageSize: 10, 
 				listLoading: false,
 				sels: [],//列表选中列
 
@@ -88,8 +88,11 @@ import request from '../../utils/request.js';
 
 
 					///分页    初始页currentPage、初始每页数据数pagesize
-			handleSizeChange:function(size){
-				this.pagesize=size;
+			handleSizeChange:function(pageSize,pageNum){
+				debugger
+				this.pageSize=pageSize;
+				this.pageNum=pageNum;
+				this.getRole();
 			},
 			handleCurrentChange:function(pageNum){
 				this.pageNum=pageNum;
