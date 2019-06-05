@@ -11,7 +11,7 @@ import request from '../../utils/request.js';
 				},
 				role: [],
 				total: 0,
-				pageNum : 0,
+				pageNum : 1,
 				pageSize: 10, 
 				listLoading: false,
 				sels: [],//列表选中列
@@ -68,13 +68,11 @@ import request from '../../utils/request.js';
 			//获取用户列表
 			getRole() {
 				this.listLoading = true;
-				debugger
 				request("/role/selectForPage", {
 					method: "POST",
 					formatJSon: true,
 					data: {"roleCode": this.filters.roleCode,"roleName": this.filters.roleName,"pageNum": this.pageNum,"pageSize": this.pageSize}
 				}).then((data) => {
-					debugger
 					this.role = data.list;
 					this.total = data.total;
 					this.pageNum = data.pageNum;
@@ -88,11 +86,14 @@ import request from '../../utils/request.js';
 
 
 					///分页    初始页currentPage、初始每页数据数pagesize
-			handleSizeChange:function(pageSize,pageNum){
+			handleSizeChange:function(pageSize){
 				debugger
 				this.pageSize=pageSize;
-				this.pageNum=pageNum;
-				this.getRole();
+				let lastPage = Math.ceil(this.total / pageSize);
+				if (this.pageNum < lastPage){
+					alert(lastPage);
+					this.getRole();
+				}
 			},
 			handleCurrentChange:function(pageNum){
 				this.pageNum=pageNum;
