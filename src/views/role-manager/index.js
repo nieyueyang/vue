@@ -71,7 +71,12 @@ import request from '../../utils/request.js';
 				request("/role/selectForPage", {
 					method: "POST",
 					formatJSon: true,
-					data: {"roleCode": this.filters.roleCode,"roleName": this.filters.roleName,"pageNum": this.pageNum,"pageSize": this.pageSize}
+					data: {
+							"roleCode": this.filters.roleCode,
+							"roleName": this.filters.roleName,
+							"pageNum": this.pageNum,
+							"pageSize": this.pageSize
+						 }
 				}).then((data) => {
 					this.role = data.list;
 					this.total = data.total;
@@ -87,11 +92,9 @@ import request from '../../utils/request.js';
 
 					///分页    初始页currentPage、初始每页数据数pagesize
 			handleSizeChange:function(pageSize){
-				debugger
 				this.pageSize=pageSize;
 				let lastPage = Math.ceil(this.total / pageSize);
 				if (this.pageNum < lastPage){
-					alert(lastPage);
 					this.getRole();
 				}
 			},

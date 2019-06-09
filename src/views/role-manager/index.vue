@@ -21,18 +21,18 @@
 		</el-col>
 
 		<!--列表-->
-		<el-table :data="role" highlight-current-row v-loading="listLoading" @selection-change="selsChange" style="width: 100%;">
+		<el-table :data="role" border highlight-current-row v-loading="listLoading" @selection-change="selsChange" style="width: 100%;" height="390">
 			<el-table-column type="selection" width="55"></el-table-column>
 			<el-table-column type="index" width="60"></el-table-column>
-			<el-table-column key="1" prop="id" label="id" v-if="false"  width="80" sortable></el-table-column>
-			<el-table-column key="2" prop="roleCode" label="角色编码" width="120" sortable></el-table-column>
+			<el-table-column key="1" prop="id" label="id" v-if="false"  width="80" ></el-table-column>
+			<el-table-column key="2" prop="roleCode" label="角色编码" width="120" ></el-table-column>
 			<el-table-column key="3" prop="roleName" label="角色名称" width="150" sortable></el-table-column>
 			<el-table-column key="4" prop="roleType" label="角色类别" width="120" sortable></el-table-column>
 			<el-table-column key="5" prop="isactive" label="是否启用" width="150" sortable></el-table-column>
 			<el-table-column key="6" prop="createAccount" label="创建人编码" min-width="180" sortable></el-table-column>
 			<el-table-column key="7" prop="createName" label="创建人" min-width="180" sortable></el-table-column>
 			<el-table-column key="8" prop="createDate" label="创建时间" :formatter="dateFormat"  min-width="180" sortable></el-table-column>
-			<el-table-column key="9" label="操作" width="150">
+			<el-table-column key="9" fixed="right" label="操作" width="150">
 				<template scope="scope">
 					<el-button size="small" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
 					<el-button type="danger" size="small" @click="handleDel(scope.$index, scope.row)">删除</el-button>

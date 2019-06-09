@@ -76,8 +76,8 @@
     -webkit-border-radius: 5px;
     border-radius: 5px;
     -moz-border-radius: 5px;
-    background-clip: padding-box;
-    margin: 180px auto;
+    //background-clip: padding-box;
+    margin:120px auto;
     width: 350px;
     padding: 35px 35px 15px 35px;
     background: #fff;
