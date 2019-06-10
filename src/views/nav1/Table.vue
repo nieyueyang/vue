@@ -168,7 +168,6 @@
 			},
 			//获取用户列表
 			getUsers() {
-				debugger
 				this.$message(sessionStorage.getItem("user"));
 				let para = {
 					page: this.page,
@@ -178,7 +177,6 @@
 				axiosGet('/menu/{}/{}', {
 					//data: {"account": this.ruleForm2.account,"password": this.ruleForm2.password}
               	}).then((data) => {
-					debugger
 					this.$router.push({ path: '/table' });
               	}).catch(() => {
 

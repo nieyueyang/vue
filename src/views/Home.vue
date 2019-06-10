@@ -126,11 +126,9 @@
 			},
 			//折叠导航栏
 			collapse:function(){
-				debugger
 				this.collapsed=!this.collapsed;
 			},
 			showMenu(i,status){
-				debugger
 				this.$refs.menuCollapsed.getElementsByClassName('submenu-hook-'+i)[0].style.display=status?'block':'none';
 			}
 		},

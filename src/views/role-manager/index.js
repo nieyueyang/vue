@@ -1,5 +1,4 @@
 import util from '../../common/js/Utils/util'
-import {axiosGet} from '../../utils/request.js';
 import request from '../../utils/request.js';
 
 	export default {
@@ -16,6 +15,23 @@ import request from '../../utils/request.js';
 				listLoading: false,
 				sels: [],//列表选中列
 
+				
+				addLoading: false,
+				addFormVisible: false,//新增界面是否显示
+				//新增界面数据
+				addForm: {
+					roleCode: "",
+					roleName:"",
+					roleType: "0",
+					isactive: "0",
+				},
+
+				addFormRules: {
+					name: [
+						{ required: true, message: '请输入姓名', trigger: 'blur' }
+					]
+				},
+
 				editFormVisible: false,//编辑界面是否显示
 				editLoading: false,
 				editFormRules: {
@@ -25,32 +41,15 @@ import request from '../../utils/request.js';
 				},
 				//编辑界面数据
 				editForm: {
-					id: 0,
-					name: '',
-					sex: -1,
-					age: 0,
-					birth: '',
-					addr: ''
-				},
-
-				addFormVisible: false,//新增界面是否显示
-				addLoading: false,
-				addFormRules: {
-					name: [
-						{ required: true, message: '请输入姓名', trigger: 'blur' }
-					]
-				},
-				//新增界面数据
-				addForm: {
-					name: '',
-					sex: -1,
-					age: 0,
-					birth: '',
-					addr: ''
+					id: "",
+					roleCode: "",
+					roleName: "",
+					roleType: "0",
+					isactive: "0",
 				}
-
 			}
 		},
+
 		methods: {
 			//性别显示转换
 			formatSex: function (row, column) {
@@ -64,6 +63,11 @@ import request from '../../utils/request.js';
 				}
 				//return util.formatDate.format(new Date(date), 'yyyy-MM-dd hh:mm:ss');
 				return util.formatDate.format(new Date(date), 'yyyy-MM-dd');
+			},
+
+			clear(){
+				this.filters.roleCode = "";
+				this.filters.roleName = "";
 			},
 			//获取用户列表
 			getRole() {
@@ -90,7 +94,7 @@ import request from '../../utils/request.js';
 			},
 
 
-					///分页    初始页currentPage、初始每页数据数pagesize
+			//分页    初始页currentPage、初始每页数据数pagesize
 			handleSizeChange:function(pageSize){
 				this.pageSize=pageSize;
 				let lastPage = Math.ceil(this.total / pageSize);
@@ -125,14 +129,45 @@ import request from '../../utils/request.js';
 			},
 			//显示编辑界面
 			handleEdit: function (index, row) {
+				debugger
 				this.editFormVisible = true;
-				this.editForm = Object.assign({}, row);
+				this.editForm = row;
+				//this.editForm = Object.assign({}, row);
 			},
 			//显示新增界面
 			handleAdd: function () {
 				this.addFormVisible = true;
-				this.addForm = {};
+				this.addForm = {roleType : 0,isactive : 0};
 			},
+
+			//新增
+			addSubmit: function () {
+				this.$refs.addForm.validate((valid) => {
+					if (valid) {
+						this.$confirm('确认提交吗？', '提示', {}).then(() => {
+							this.addLoading = true;
+							let para = Object.assign({}, this.addForm);
+							//para.birth = (!para.birth || para.birth == '') ? '' : util.formatDate.format(new Date(para.birth), 'yyyy-MM-dd');
+							request('/role', {
+								method: "Post",
+								data: para,
+								formatJSon: true,
+							}).then((data) => {
+								if (data > 0){
+									this.$message({type: 'success', message: "保存成功"})
+								}
+								this.getRole();
+							}).catch(
+								  
+							)
+
+							this.addFormVisible = false;
+							this.addLoading = false
+						});
+					}
+				});
+			},
+
 			//编辑
 			editSubmit: function () {
 				this.$refs.editForm.validate((valid) => {
@@ -157,33 +192,8 @@ import request from '../../utils/request.js';
 					}
 				});
 			},
-			//新增
-			addSubmit: function () {
-				this.$refs.addForm.validate((valid) => {
-					if (valid) {
-						this.$confirm('确认提交吗？', '提示', {}).then(() => {
-							this.addLoading = true;
-							let para = Object.assign({}, this.addForm);
-							//para.birth = (!para.birth || para.birth == '') ? '' : util.formatDate.format(new Date(para.birth), 'yyyy-MM-dd');
-							axiosPost('/role', {
-								data: para,
-								formatJSon: true,
-								headers: {
-									'Content-Type':'application/json'
-								}
-							}).then((data) => {
-								debugger
-								this.getRole();
-							}).catch(
-								this.addLoading = false
-								)
-
-						});
-					}
-				});
-			},
+			
 			selsChange: function (sels) {
-				debugger
 				this.sels = sels;
 			},
 			//批量删除

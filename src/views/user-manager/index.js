@@ -77,7 +77,6 @@ import {axiosGet} from '../../utils/request.js';
                   axiosGet('/user/1/20', {
 					//data: {"account": this.ruleForm2.account,"password": this.ruleForm2.password}
               	}).then((data) => {
-                    debugger
                     this.users = data.list;
                     
               	}).catch()

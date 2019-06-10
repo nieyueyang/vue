@@ -74,11 +74,9 @@ import {axiosGet} from '../../utils/request.js';
 				// 	this.listLoading = false;
 				// 	//NProgress.done();
 				// });
-                debugger
                   axiosGet('/menu/{}/{}', {
 					//data: {"account": this.ruleForm2.account,"password": this.ruleForm2.password}
               	}).then((data) => {
-                    debugger
                     this.menu = data;
                     
               	}).catch()

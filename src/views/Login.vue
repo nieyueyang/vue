@@ -53,7 +53,6 @@
                   method: "POST",
                   data: {"account": this.ruleForm2.account,"password": this.ruleForm2.password}
               }).then((data) => {
-                  debugger
                   sessionStorage.setItem('user', JSON.stringify(this.ruleForm2.account));
                   sessionStorage.setItem('Authorization', data);
                   this.$router.push({ path: '/table' });

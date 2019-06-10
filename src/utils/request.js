@@ -55,7 +55,6 @@ export default (url, options) => {
 
 export const axiosPost = (url, options) => {
     let data = {}
-    debugger
     if (options.formatJSon) {
       data = options.data
     } else {
@@ -81,7 +80,6 @@ export const axiosPost = (url, options) => {
 
 
 export const axiosGet = (url, options) => {
-  debugger
   let param = options.param||{}
   param['_R']=Math.random();
   let data = {}
@@ -104,6 +102,7 @@ export const axiosGet = (url, options) => {
 
 //返回数据处理
 function responseHandle(data,resolve){
+  debugger
   if(data.code == 200){  //访问成功
     resolve(data.data);
   }else if (data.code == 20003 || data.code == 20001){ //需要特殊处理的数据
