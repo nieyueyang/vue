@@ -14,6 +14,8 @@ import Menu from "./views/menu-manager/index.vue"
 import User from "./views/user-manager/index.vue"
 import Role from "./views/role-manager/index.vue"
 
+import RoleFrom from "./views/user-manager/roleFrom.vue"
+
 let routes = [
     {
         path: '/login',
@@ -40,8 +42,11 @@ let routes = [
             { path: '/menu', component: Menu, name: '菜单管理111' },
             { path: '/user', component: User, name: '用户管理' },
             { path: '/role', component: Role, name: '角色管理' },
+
+            { path: '/roleFrom', component: RoleFrom, name: '角色管理' },
         ]
     },
+    
     {
         path: '',
         component: Home,

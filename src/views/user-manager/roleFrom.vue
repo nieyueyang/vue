@@ -1,4 +1,4 @@
-<script type="text/javascript" src="./index.js"></script>
+<script type="text/javascript" src="./roleFrom.js"></script>
 
 <template>
 	<section>
@@ -18,10 +18,7 @@
 					<el-button type="primary" size="small" v-on:click="clear">清除</el-button>
 				</el-form-item>
 				<el-form-item>
-					<el-button type="primary" size="small" @click="handleAdd">新增</el-button>
-				</el-form-item>
-				<el-form-item>
-					<el-button type="danger" @click="batchDelete" size="small" :disabled="this.sels.length===0">批量删除</el-button>
+					<el-button type="添加角色" size="small" v-on:click="clear">清除</el-button>
 				</el-form-item>
 			</el-form>
 		</el-col>
@@ -35,9 +32,6 @@
 			<el-table-column key="3" prop="roleName" label="角色名称" width="150" sortable></el-table-column>
 			<el-table-column key="4" prop="roleType" label="角色类别" width="120" :formatter="formatRoleType" sortable></el-table-column>
 			<el-table-column key="5" prop="isactive" label="是否启用" width="100" :formatter="formatIsactive"></el-table-column>
-			<el-table-column key="6" prop="createAccount"  label="创建人编码" v-if="false" min-width="180" sortable></el-table-column>
-			<el-table-column key="7" prop="createName" label="创建人" width="120" sortable></el-table-column>
-			<el-table-column key="8" prop="createDate" label="创建时间" :formatter="dateFormat"  width="120" sortable></el-table-column>
 			<el-table-column key="9" label="操作" width="200">
 				<template scope="scope">
 					<el-button size="small" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>

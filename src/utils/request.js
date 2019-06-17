@@ -102,7 +102,6 @@ export const axiosGet = (url, options) => {
 
 //返回数据处理
 function responseHandle(data,resolve){
-  debugger
   if(data.code == 200){  //访问成功
     resolve(data.data);
   }else if (data.code == 20003 || data.code == 20001){ //需要特殊处理的数据

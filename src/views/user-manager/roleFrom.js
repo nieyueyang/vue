@@ -5,49 +5,65 @@ import request from '../../utils/request.js';
 		data() {
 			return {
 				filters: {
-					account:"",
-					name: ""
+					roleCode: "",
+					roleName:""
 				},
-				users: [],
+				role: [],
 				total: 0,
 				pageNum : 1,
 				pageSize: 10, 
 				listLoading: false,
 				sels: [],//列表选中列
 
-				addFormVisible: false,//新增界面是否显示
+				
 				addLoading: false,
-				addFormRules: {
-					account: [
-						{ required: true, message: '请输入账号', trigger: 'blur' }
-					],
-					name:[
-						{ required: true, message: '请输入姓名', trigger: 'blur' }
-					]
-				},
+				addFormVisible: false,//新增界面是否显示
 				//新增界面数据
 				addForm: {
-					sex: 0
+					roleCode: "",
+					roleName:"",
+					roleType: "0",
+					isactive: "0",
+				},
 
+				addFormRules: {
+					roleCode: [
+						{ required: true, message: '请输入角色编码', trigger: 'blur' }
+					],
+					roleName: [
+						{ required: true, message: '请输入角色名称', trigger: 'blur' }
+					]
 				},
 
 				editFormVisible: false,//编辑界面是否显示
 				editLoading: false,
 				editFormRules: {
-					name: [
-						{ required: true, message: '请输入姓名', trigger: 'blur' }
+					roleCode: [
+						{ required: true, message: '请输入角色编码', trigger: 'blur' }
+					],
+					roleName: [
+						{ required: true, message: '请输入角色名称', trigger: 'blur' }
 					]
 				},
 				//编辑界面数据
 				editForm: {
+					id: "",
+					roleCode: "",
+					roleName: "",
+					roleType: "0",
+					isactive: "0",
 				}
-
 			}
 		},
+
 		methods: {
-			//性别显示转换
-			formatSex: function (row, column) {
-				return row.sex == 0 ? '男' : row.sex == 1 ? '女' : '未知';
+			//角色类别
+			formatRoleType: function (row, column) {
+				return row.roleType == "0" ? "业务类" :row.roleType == "1" ? "管理类" : row.roleType == "2" ? "审计类" : '未知';
+			},
+			//是否启用
+			formatIsactive: function (row, column) {
+				return row.isactive == "0" ? "启用" :row.isactive == "1" ? "停用" : "未知";
 			},
 			//日期格式化
 			dateFormat: function(row, column){
@@ -58,24 +74,21 @@ import request from '../../utils/request.js';
 				//return util.formatDate.format(new Date(date), 'yyyy-MM-dd hh:mm:ss');
 				return util.formatDate.format(new Date(date), 'yyyy-MM-dd');
 			},
+
 			clear(){
-				this.filters.account = "";
-				this.filters.name = "";
+				this.filters.roleCode = "";
+				this.filters.roleName = "";
 			},
-			//获取用户列表
-			getUsers() {
+			//获取角色列表
+			getRole() {
+				let id = this.$route.query.id;
+				debugger
 				this.listLoading = true;
-				request("/user/queryForPage", {
-					method: "POST",
-					formatJSon: true,
-					data: {
-							"account": this.filters.account,
-							"name": this.filters.name,
-							"pageNum": this.pageNum,
-							"pageSize": this.pageSize
-						 }
+				request("/role/" + id + "/" +this.pageNum + "/"+ this.pageSize , {
+					method: "GET",
+
 				}).then((data) => {
-					this.users = data.list;
+					this.role = data.list;
 					this.total = data.total;
 					this.pageNum = data.pageNum;
 					this.pageSize = data.pageSize;
@@ -84,32 +97,25 @@ import request from '../../utils/request.js';
 				});
 
 				this.listLoading = false;
-
-
 			},
-			//翻页
+
 			handleCurrentChange:function(pageNum){
 				this.pageNum=pageNum;
-				this.getUsers();
-			},
+				this.getRole();
+			},	
 			//改变pageSize
 			handleSizeChange:function(pageSize){
 				this.pageSize=pageSize;
 				let lastPage = Math.ceil(this.total / pageSize);
 				if (this.pageNum <= lastPage){
-					this.getUsers();
+					this.getRole();
 				}
 			},
-		
 			//显示新增界面
 			handleAdd: function () {
 				this.addFormVisible = true;
-				this.addForm = {
-					sex: 0,
-					age: 0
-				};
+				this.addForm = {roleType : 0,isactive : 0};
 			},
-
 			//新增
 			addSubmit: function () {
 				this.$refs.addForm.validate((valid) => {
@@ -117,8 +123,8 @@ import request from '../../utils/request.js';
 						this.$confirm('确认提交吗？', '提示', {}).then(() => {
 							this.addLoading = true;
 							let para = Object.assign({}, this.addForm);
-							para.birthday = (!para.birthday || para.birthday == '') ? '' : util.formatDate.format(new Date(para.birthday), 'yyyy-MM-dd');
-							request('/user', {
+							//para.birth = (!para.birth || para.birth == '') ? '' : util.formatDate.format(new Date(para.birth), 'yyyy-MM-dd');
+							request('/role', {
 								method: "Post",
 								data: para,
 								formatJSon: true,
@@ -126,9 +132,9 @@ import request from '../../utils/request.js';
 								if (data > 0){
 									this.$message({type: 'success', message: "保存成功"})
 								}
-								this.getUsers();
+								this.getRole();
 							}).catch(
-									
+								  
 							)
 
 							this.addFormVisible = false;
@@ -140,7 +146,7 @@ import request from '../../utils/request.js';
 			//显示编辑界面
 			handleEdit: function (index, row) {
 				this.editFormVisible = true;
-				this.editForm = Object.assign({}, row);
+				this.editForm = row;
 			},
 			//编辑
 			editSubmit: function () {
@@ -148,11 +154,8 @@ import request from '../../utils/request.js';
 					if (valid) {
 						this.$confirm('确认提交吗？', '提示', {}).then(() => {
 							this.editLoading = true;
-							//NProgress.start();
 							let para = Object.assign({}, this.editForm);
-							para.birthday = (!para.birthday || para.birthday == '') ? '' : util.formatDate.format(new Date(para.birthday), 'yyyy-MM-dd');
-							
-							request("/user/" + para.id, {
+							request("/role/" + para.id, {
 								method: "PUT",
 								data: para,
 								formatJSon: true,
@@ -160,18 +163,17 @@ import request from '../../utils/request.js';
 								if (data > 0){
 									this.$message({type: 'success', message: "保存成功"})
 								}
-								this.getUsers();
+								this.getUser();
 							}).catch(
 								  
 							)
 							this.editFormVisible = false;
 							this.editLoading = false
-
+							
 						});
 					}
 				});
 			},
-
 			//删除
 			handleDelete: function (index, row) {
 				this.$confirm('确认删除该记录吗?', '提示', {
@@ -179,14 +181,14 @@ import request from '../../utils/request.js';
 				}).then(() => {
 					this.listLoading = true;
 					let para = { id: row.id };
-					request("/user/" + para.id, {
+					request("/role/" + para.id, {
 						method: "DELETE",
 						formatJSon: true,
 					}).then((data) => {
 						if (data > 0){
 							this.$message({type: 'success', message: "删除成功"})
 						}
-						this.getUsers();
+						this.getRole();
 					}).catch()(
 
 					)
@@ -209,14 +211,14 @@ import request from '../../utils/request.js';
 				}).then(() => {
 					this.listLoading = true;
 					let para = { ids: ids };
-					request("/user/" + para.ids, {
+					request("/role/" + para.ids, {
 						method: "DELETE",
 						formatJSon: true,
 					}).then((data) => {
 						if (data > 0){
 							this.$message({type: 'success', message: "删除成功"})
 						}
-						this.getUsers();
+						this.getRole();
 					}).catch()(
 
 					)
@@ -224,19 +226,10 @@ import request from '../../utils/request.js';
 				}).catch(() => {
 
 				});
-
-				this.listLoading = false;
-			},
-
-			//显示添加角色列表
-			showRoleFrom: function (index, row) {
-				//this.roleFormDate.roleFormVisible=false;
-				//this.roleFormDate.roleFormVisible=!this.roleFormDate.roleFormVisible;
-				
-				this.$router.push({path:"/roleFrom",query:{id:row.id}});
 			}
 		},
+		
 		mounted() {
-			this.getUsers();
+			this.getRole();
 		}
 	}
