@@ -12,30 +12,31 @@
 					<el-input v-model="filters.roleName" size="small" placeholder="角色名称"></el-input>
 				</el-form-item>
 				<el-form-item>
-					<el-button type="primary" size="small" v-on:click="getRole">查询</el-button>
+					<el-button type="primary" size="small" v-on:click="getUserRole">查询</el-button>
 				</el-form-item>
 				<el-form-item>
 					<el-button type="primary" size="small" v-on:click="clear">清除</el-button>
 				</el-form-item>
 				<el-form-item>
-					<el-button type="添加角色" size="small" v-on:click="clear">清除</el-button>
+					<el-button type="primary" size="small" v-on:click="batchSave">保存</el-button>
 				</el-form-item>
+			
 			</el-form>
 		</el-col>
 
 		<!--列表-->
-		<el-table :data="role" border highlight-current-row v-loading="listLoading" @selection-change="selsChange" style="width: 100%;" height="390">
+		<el-table :data="role" ref="multipleTable" border highlight-current-row v-loading="listLoading" @selection-change="selsChange" style="width: 100%;" height="390">
 			<el-table-column type="selection" width="40"></el-table-column>
 			<el-table-column type="index" width="55"></el-table-column>
-			<el-table-column key="1" prop="id" label="id" v-if="false"  width="80" ></el-table-column>
-			<el-table-column key="2" prop="roleCode" label="角色编码" width="100" ></el-table-column>
-			<el-table-column key="3" prop="roleName" label="角色名称" width="150" sortable></el-table-column>
-			<el-table-column key="4" prop="roleType" label="角色类别" width="120" :formatter="formatRoleType" sortable></el-table-column>
-			<el-table-column key="5" prop="isactive" label="是否启用" width="100" :formatter="formatIsactive"></el-table-column>
-			<el-table-column key="9" label="操作" width="200">
+			<el-table-column prop="id" label="id" width="80" ></el-table-column>
+			<el-table-column prop="userId" label="userId"  width="80" ></el-table-column>
+			<el-table-column prop="userAccount" label="userAccount"  width="80" ></el-table-column>
+			<el-table-column prop="roleCode" label="角色编码" width="100" ></el-table-column>
+			<el-table-column prop="roleName" label="角色名称" width="150" sortable></el-table-column>
+			<el-table-column prop="roleType" label="角色类别" width="120" :formatter="formatRoleType" sortable></el-table-column>
+			<el-table-column prop="isactive" label="是否启用" width="100" :formatter="formatIsactive"></el-table-column>
+			<el-table-column label="操作" width="200">
 				<template scope="scope">
-					<el-button size="small" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-					<el-button size="small" @click="handleEdit(scope.$index, scope.row)">授权</el-button>
 					<el-button type="danger" size="small" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
 				</template>
 			</el-table-column>
@@ -52,76 +53,7 @@
 			style="float:right;">
     	</el-pagination>
 
-		<!--新增界面-->
-		<el-dialog title="新增" customClass="customWidth" v-model="addFormVisible" :close-on-click-modal="false">
-			<el-form :model="addForm" label-width="80px" :rules="addFormRules" ref="addForm">
-				<el-form-item label="角色编码" prop="roleCode">
-					<el-col :span="15">
-						<el-input type="text" v-model="addForm.roleCode"  size="small"></el-input>
-					</el-col>	
-				</el-form-item>
-				<el-form-item label="角色名称" prop="roleName">
-					<el-col :span="15">
-						<el-input type="text" v-model="addForm.roleName"  size="small"></el-input>
-					</el-col>	
-				</el-form-item>
-				<el-form-item label="角色类型">
-						<el-select v-model="addForm.roleType" placeholder="请选择角色类型">
-							<el-option label="业务类" :value="0"></el-option>
-							<el-option label="管理类" :value="1"></el-option>
-							<el-option label="审计类" :value="2"></el-option>
-						</el-select>
-				</el-form-item>
-				<el-form-item label="是否启用">
-					<el-radio-group v-model="addForm.isactive">
-						<el-radio class="radio" :label="0">启用</el-radio>
-						<el-radio class="radio" :label="1">停用</el-radio>
-					</el-radio-group>
-				</el-form-item>
-			</el-form>
-			<div slot="footer" class="dialog-footer">
-				<el-button @click.native="addFormVisible = false">取消</el-button>
-				<el-button type="primary" @click.native="addSubmit" :loading="addLoading">提交</el-button>
-			</div>
-		</el-dialog>
-
-		<!--编辑界面-->
-		<el-dialog title="编辑" customClass="customWidth" v-model="editFormVisible" :close-on-click-modal="false">
-			<el-form :model="editForm" label-width="80px" :rules="editFormRules" ref="editForm">
-				<el-form-item label="id" prop="id" hidden>
-					<el-input type="text"  v-model="editForm.id"  size="small"></el-input>
-				</el-form-item>
-
-				<el-form-item label="角色编码" prop="roleCode">
-					<el-col :span="15">
-						<el-input type="text" v-model="editForm.roleCode" readonly="true"  size="small"></el-input>
-					</el-col>	
-				</el-form-item>
-				<el-form-item label="角色名称" prop="roleName">
-					<el-col :span="15">
-						<el-input type="text" v-model="editForm.roleName"  size="small"></el-input>
-					</el-col>	
-				</el-form-item>
-				<el-form-item label="角色类型">
-						<el-select v-model="editForm.roleType" placeholder="请选择角色类型">
-							<el-option label="业务类" value="0"></el-option>
-							<el-option label="管理类" value="1"></el-option>
-							<el-option label="审计类" value="2"></el-option>
-						</el-select>
-				</el-form-item>
-				<el-form-item label="是否启用">
-					<el-radio-group v-model="editForm.isactive">
-						<el-radio class="radio" label="0">启用</el-radio>
-						<el-radio class="radio" label="1">停用</el-radio>
-					</el-radio-group>
-				</el-form-item>
-			</el-form>
-
-			<div slot="footer" class="dialog-footer">
-				<el-button @click.native="editFormVisible = false">取消</el-button>
-				<el-button type="primary" @click.native="editSubmit" :loading="editLoading">提交</el-button>
-			</div>
-		</el-dialog>
+	
 
 	</section>
 </template>

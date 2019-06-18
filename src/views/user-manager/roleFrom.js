@@ -14,45 +14,7 @@ import request from '../../utils/request.js';
 				pageSize: 10, 
 				listLoading: false,
 				sels: [],//列表选中列
-
-				
-				addLoading: false,
-				addFormVisible: false,//新增界面是否显示
-				//新增界面数据
-				addForm: {
-					roleCode: "",
-					roleName:"",
-					roleType: "0",
-					isactive: "0",
-				},
-
-				addFormRules: {
-					roleCode: [
-						{ required: true, message: '请输入角色编码', trigger: 'blur' }
-					],
-					roleName: [
-						{ required: true, message: '请输入角色名称', trigger: 'blur' }
-					]
-				},
-
-				editFormVisible: false,//编辑界面是否显示
-				editLoading: false,
-				editFormRules: {
-					roleCode: [
-						{ required: true, message: '请输入角色编码', trigger: 'blur' }
-					],
-					roleName: [
-						{ required: true, message: '请输入角色名称', trigger: 'blur' }
-					]
-				},
-				//编辑界面数据
-				editForm: {
-					id: "",
-					roleCode: "",
-					roleName: "",
-					roleType: "0",
-					isactive: "0",
-				}
+			
 			}
 		},
 
@@ -80,128 +42,83 @@ import request from '../../utils/request.js';
 				this.filters.roleName = "";
 			},
 			//获取角色列表
-			getRole() {
+			getUserRole() {
 				let id = this.$route.query.id;
-				debugger
 				this.listLoading = true;
-				request("/role/" + id + "/" +this.pageNum + "/"+ this.pageSize , {
+				request("/userrole/" + id + "/" +this.pageNum + "/"+ this.pageSize , {
 					method: "GET",
 
 				}).then((data) => {
+					debugger
 					this.role = data.list;
 					this.total = data.total;
 					this.pageNum = data.pageNum;
 					this.pageSize = data.pageSize;
+
+					this.$nextTick(function() {
+						this.toggleSelection(this.role);
+					  })
+
 				}).catch(() => {
 
 				});
 
 				this.listLoading = false;
 			},
+			//默认选中
+			toggleSelection(rows) {
+				if (rows) {
+				  rows.forEach(row => {
+					  if (row.userId != ""){
+						this.$refs.multipleTable.toggleRowSelection(row, true);
+					  }else{
+						this.$refs.multipleTable.clearSelection();
+					  }
+				  })
+				} else {
+				  this.$refs.multipleTable.clearSelection()
+				}
+			  },
 
 			handleCurrentChange:function(pageNum){
 				this.pageNum=pageNum;
-				this.getRole();
+				this.getUserRole();
 			},	
 			//改变pageSize
 			handleSizeChange:function(pageSize){
 				this.pageSize=pageSize;
 				let lastPage = Math.ceil(this.total / pageSize);
 				if (this.pageNum <= lastPage){
-					this.getRole();
+					this.getUserRole();
 				}
 			},
-			//显示新增界面
-			handleAdd: function () {
-				this.addFormVisible = true;
-				this.addForm = {roleType : 0,isactive : 0};
-			},
-			//新增
-			addSubmit: function () {
-				this.$refs.addForm.validate((valid) => {
-					if (valid) {
-						this.$confirm('确认提交吗？', '提示', {}).then(() => {
-							this.addLoading = true;
-							let para = Object.assign({}, this.addForm);
-							//para.birth = (!para.birth || para.birth == '') ? '' : util.formatDate.format(new Date(para.birth), 'yyyy-MM-dd');
-							request('/role', {
-								method: "Post",
-								data: para,
-								formatJSon: true,
-							}).then((data) => {
-								if (data > 0){
-									this.$message({type: 'success', message: "保存成功"})
-								}
-								this.getRole();
-							}).catch(
-								  
-							)
 
-							this.addFormVisible = false;
-							this.addLoading = false
-						});
-					}
-				});
+			selsChange: function (sels) {
+				this.sels = sels;
 			},
-			//显示编辑界面
-			handleEdit: function (index, row) {
-				this.editFormVisible = true;
-				this.editForm = row;
-			},
-			//编辑
-			editSubmit: function () {
-				this.$refs.editForm.validate((valid) => {
-					if (valid) {
-						this.$confirm('确认提交吗？', '提示', {}).then(() => {
-							this.editLoading = true;
-							let para = Object.assign({}, this.editForm);
-							request("/role/" + para.id, {
-								method: "PUT",
-								data: para,
-								formatJSon: true,
-							}).then((data) => {
-								if (data > 0){
-									this.$message({type: 'success', message: "保存成功"})
-								}
-								this.getUser();
-							}).catch(
-								  
-							)
-							this.editFormVisible = false;
-							this.editLoading = false
-							
-						});
-					}
-				});
-			},
-			//删除
-			handleDelete: function (index, row) {
-				this.$confirm('确认删除该记录吗?', '提示', {
+			batchSave:function(){
+				var ids = this.sels.map(item => item.id).toString();
+				this.$confirm('确认删除选中记录吗？', '提示', {
 					type: 'warning'
 				}).then(() => {
 					this.listLoading = true;
-					let para = { id: row.id };
-					request("/role/" + para.id, {
+					let para = { ids: ids };
+					request("/role/" + para.ids, {
 						method: "DELETE",
 						formatJSon: true,
 					}).then((data) => {
 						if (data > 0){
 							this.$message({type: 'success', message: "删除成功"})
 						}
-						this.getRole();
+						this.getUserRole();
 					}).catch()(
 
 					)
-
+					
 				}).catch(() => {
 
 				});
 
-				this.listLoading = false;
-			},
-			
-			selsChange: function (sels) {
-				this.sels = sels;
 			},
 			//批量删除
 			batchDelete: function () {
@@ -218,7 +135,7 @@ import request from '../../utils/request.js';
 						if (data > 0){
 							this.$message({type: 'success', message: "删除成功"})
 						}
-						this.getRole();
+						this.getUserRole();
 					}).catch()(
 
 					)
@@ -230,6 +147,6 @@ import request from '../../utils/request.js';
 		},
 		
 		mounted() {
-			this.getRole();
+			this.getUserRole();
 		}
 	}
