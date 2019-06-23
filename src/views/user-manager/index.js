@@ -233,7 +233,7 @@ import request from '../../utils/request.js';
 				//this.roleFormDate.roleFormVisible=false;
 				//this.roleFormDate.roleFormVisible=!this.roleFormDate.roleFormVisible;
 				
-				this.$router.push({path:"/roleFrom",query:{id:row.id}});
+				this.$router.push({path:"/roleFrom",query:{id:row.id,account:row.account}});
 			}
 		},
 		mounted() {

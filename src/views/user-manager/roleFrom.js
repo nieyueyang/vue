@@ -8,13 +8,26 @@ import request from '../../utils/request.js';
 					roleCode: "",
 					roleName:""
 				},
-				role: [],
+				userRole: [],
 				total: 0,
 				pageNum : 1,
 				pageSize: 10, 
 				listLoading: false,
 				sels: [],//列表选中列
-			
+
+				addRoleVisible: false,
+				addRoleFrom:[],
+
+				roleFrom:{
+					roleCode: "",
+					roleName: "",
+					role: [],
+					total: 0,
+					pageNum : 1,
+					pageSize: 10, 
+					sels: []//列表选中列
+				}
+
 			}
 		},
 
@@ -45,19 +58,22 @@ import request from '../../utils/request.js';
 			getUserRole() {
 				let id = this.$route.query.id;
 				this.listLoading = true;
-				request("/userrole/" + id + "/" +this.pageNum + "/"+ this.pageSize , {
+				request("/userrole/" + id + "/" +this.pageNum + "/"+ this.pageSize + "/0" , {
 					method: "GET",
+					param: {
+						roleCode:this.filters.roleCode,
+						roleName:this.filters.roleName,
+					}
 
 				}).then((data) => {
-					debugger
-					this.role = data.list;
+					this.userRole = data.list;
 					this.total = data.total;
 					this.pageNum = data.pageNum;
 					this.pageSize = data.pageSize;
 
-					this.$nextTick(function() {
-						this.toggleSelection(this.role);
-					  })
+					// this.$nextTick(function() {
+					// 	this.toggleSelection(this.userRole,id,account);
+					//   })
 
 				}).catch(() => {
 
@@ -66,14 +82,18 @@ import request from '../../utils/request.js';
 				this.listLoading = false;
 			},
 			//默认选中
-			toggleSelection(rows) {
-				if (rows) {
-				  rows.forEach(row => {
-					  if (row.userId != ""){
+			toggleSelection(userRole,id,account) {
+				if (userRole) {
+					userRole.forEach(row => {
+					row.userId = id;
+					row.userAccount = account;
+					if(row.isDelete == ""){
+						row.isDelete="0";
+					}
+					if(row.id != "" && row.isDelete != "1"){
 						this.$refs.multipleTable.toggleRowSelection(row, true);
-					  }else{
-						this.$refs.multipleTable.clearSelection();
-					  }
+					}
+
 				  })
 				} else {
 				  this.$refs.multipleTable.clearSelection()
@@ -92,20 +112,93 @@ import request from '../../utils/request.js';
 					this.getUserRole();
 				}
 			},
-
 			selsChange: function (sels) {
 				this.sels = sels;
 			},
-			batchSave:function(){
-				var ids = this.sels.map(item => item.id).toString();
-				this.$confirm('确认删除选中记录吗？', '提示', {
+			//获取角色列表
+			getRole() {
+				let id = this.$route.query.id;
+				this.listLoading = true;
+				request("/userrole/" + id + "/" +this.roleFrom.pageNum + "/"+ this.roleFrom.pageSize + "/1" , {
+					method: "GET",
+					param: {
+						roleCode:this.roleFrom.roleCode,
+						roleName:this.roleFrom.roleName,
+					  }
+
+				}).then((data) => {
+					this.roleFrom.role = data.list;
+					this.roleFrom.total = data.total;
+					this.roleFrom.pageNum = data.pageNum;
+					this.roleFrom.pageSize = data.pageSize;
+					this.roleFrom.role.forEach(row =>{
+						row.userId = this.$route.query.id;
+						row.userAccount = this.$route.query.account;
+					})
+				}).catch(() => {
+
+				});
+
+				this.listLoading = false;
+			},
+
+			handleCurrentChange_role:function(pageNum){
+				this.roleFrom.pageNum=pageNum;
+				this.getRole();
+			},	
+			//改变pageSize
+			handleSizeChange_role:function(pageSize){
+				this.roleFrom.pageSize=pageSize;
+				let lastPage = Math.ceil(this.roleFrom.total / pageSize);
+				if (this.roleFrom.pageNum <= lastPage){
+					this.getRole();
+				}
+			},
+
+			clearRole(){
+				this.roleFrom.roleCode = "";
+				this.roleFrom.roleName = "";
+			},
+
+			roleFromselsChange: function (sels) {
+				this.roleFrom.sels = sels;
+			},
+			//显示新增角色界面
+			handleAddRole: function () {
+				this.addRoleVisible = true;
+				this.getRole();
+			},
+			
+			batchSave:function(){				
+				this.listLoading = true;
+				request("/userrole", {
+					method: "POST",
+					data: {
+						userRole : JSON.stringify(this.roleFrom.sels)
+					}
+				}).then((data) => {
+					if (data > 0){
+						this.$message({type: 'success', message: "保存成功"})
+					}
+					this.addRoleVisible = false;
+					this.getUserRole();
+				}).catch(() => {
+
+				});
+
+				this.listLoading = false;
+
+			},
+
+			//删除
+			handleDelete: function (index, row) {
+				this.$confirm('确认删除该记录吗?', '提示', {
 					type: 'warning'
 				}).then(() => {
 					this.listLoading = true;
-					let para = { ids: ids };
-					request("/role/" + para.ids, {
+					let para = { id: row.id };
+					request("/userrole/" + para.id, {
 						method: "DELETE",
-						formatJSon: true,
 					}).then((data) => {
 						if (data > 0){
 							this.$message({type: 'success', message: "删除成功"})
@@ -114,23 +207,24 @@ import request from '../../utils/request.js';
 					}).catch()(
 
 					)
-					
+
 				}).catch(() => {
 
 				});
 
+				this.listLoading = false;
 			},
 			//批量删除
 			batchDelete: function () {
+				debugger
 				var ids = this.sels.map(item => item.id).toString();
 				this.$confirm('确认删除选中记录吗？', '提示', {
 					type: 'warning'
 				}).then(() => {
 					this.listLoading = true;
 					let para = { ids: ids };
-					request("/role/" + para.ids, {
+					request("/userrole/" + para.ids, {
 						method: "DELETE",
-						formatJSon: true,
 					}).then((data) => {
 						if (data > 0){
 							this.$message({type: 'success', message: "删除成功"})
@@ -143,6 +237,11 @@ import request from '../../utils/request.js';
 				}).catch(() => {
 
 				});
+			},
+			//返回
+			back:function() {
+				//返回上一层
+				this.$router.go(-1);
 			}
 		},
 		

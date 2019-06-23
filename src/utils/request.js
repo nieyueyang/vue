@@ -16,10 +16,8 @@ axios.defaults.timeout = 30*60*1000;  // 30分钟
 export default (url, options) => {
   let param = options.param||{}
   param['_R']=Math.random();
-
   return new Promise((resolve) => {
     let data = {}
-   
     if (options.formatJSon) {
       data = options.data
     } else {

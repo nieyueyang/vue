@@ -82,7 +82,7 @@ import request from '../../utils/request.js';
 			//获取角色列表
 			getRole() {
 				this.listLoading = true;
-				request("/role/selectForPage", {
+				request("/role/queryForPage", {
 					method: "POST",
 					formatJSon: true,
 					data: {
