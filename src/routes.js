@@ -16,6 +16,10 @@ import Role from "./views/role-manager/index.vue"
 
 import RoleFrom from "./views/user-manager/roleFrom.vue"
 
+
+import AppSystem from "./views/appSystem-manager/index.vue"
+import AppSystemFunc from "./views/AppSystemFunc-manager/index.vue"
+
 let routes = [
     {
         path: '/login',
@@ -43,7 +47,11 @@ let routes = [
             { path: '/user', component: User, name: '用户管理' },
             { path: '/role', component: Role, name: '角色管理' },
 
-            { path: '/roleFrom', component: RoleFrom, name: '角色管理' },
+            { path: '/roleFrom', component: RoleFrom, name: '角色' },
+
+            { path: '/appSystem', component: AppSystem, name: '系统管理' },
+            { path: '/appSystemFunc', component: AppSystemFunc, name: '功能管理' },
+            
         ]
     },
     
