@@ -77,7 +77,7 @@
 
 <script>
 
-	import {axiosGet} from '../utils/request.js';
+	import {axiosGet} from '../common/js/Utils/request.js';
 
 	export default {
 		data() {

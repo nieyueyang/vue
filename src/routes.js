@@ -18,7 +18,8 @@ import RoleFrom from "./views/user-manager/roleFrom.vue"
 
 
 import AppSystem from "./views/appSystem-manager/index.vue"
-import AppSystemFunc from "./views/AppSystemFunc-manager/index.vue"
+import AppSystemFunc from "./views/systemFunc-manager/index.vue"
+import FuncGroup from "./views/funcGroup-manager/index.vue"
 
 let routes = [
     {
@@ -51,6 +52,8 @@ let routes = [
 
             { path: '/appSystem', component: AppSystem, name: '系统管理' },
             { path: '/appSystemFunc', component: AppSystemFunc, name: '功能管理' },
+            { path: '/funcGroup', component: FuncGroup, name: '功能组管理' },
+            
             
         ]
     },

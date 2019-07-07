@@ -4,79 +4,64 @@ import request from '../../common/js/Utils/request.js';
 	export default {
 		data() {
 			return {
-				filters: {
-					systemCode: "",
-					systemName:""
+				query: {
+					groupCode:"",
+					groupName :""
 				},
-				appSystem: [],
+				funcGroup: [],
+				appSystemFunc:[],
 				total: 0,
 				pageNum : 1,
 				pageSize: 10, 
 				listLoading: false,
 				sels: [],//列表选中列
 
-				addLoading: false,
-				addFormVisible: false,//新增界面是否显示
+				openLoading: false,
+				openFormVisible: false,//新增界面是否显示
 				//新增界面数据
-				addForm: {
+				openForm: {
 
 				},
-				addFormRules: {
-					systemCode: [
-						{ required: true, message: '请输入系统编码', trigger: 'blur' }
+				openFormRules: {
+					groupCode: [
+						{ required: true, message: "请输入功能组编码", trigger: 'blur' }
 					],
-					systemName: [
-						{ required: true, message: '请输系统名称', trigger: 'blur' }
-					],
-					domain: [
-						{ required: true, message: '请输域名', trigger: 'blur' }
+					groupName: [
+						{ required: true, message: "请输入功能组名称", trigger: 'blur' }
 					]
 				},
+				funcForm: {
 
-				
-
-	
-
+				},
 			}
 		},
 
 		methods: {
-			//类别显示转换
-			formatType: function (row, column) {
-				return row.type == "0" ? "内部" : row.type == "1" ? "外部" : "";
-			},
-			//启用停用显示转换
-			formatStatus: function (row, column) {
-				return row.status == "0" ? "启用" : row.status == "1" ? "禁用" : "";
-			},
 			//日期格式化
 			dateFormat: function(row, column){
 				var date = row[column.property];
 				if (date == undefined || date == "" || date == null) {
 				  return "";
 				}
-				//return util.formatDate.format(new Date(date), 'yyyy-MM-dd hh:mm:ss');
 				return util.formatDate.format(new Date(date), 'yyyy-MM-dd');
 			},
 
 			clear(){
-				this.filters.systemCode = "";
-				this.filters.systemName = "";
+				this.query.groupCode = "";
+				this.query.groupName = "";
 			},
-			//获取角色列表
-			getAppSystem() {
+			//获取功能列表
+			getFuncGroup() {
 				this.listLoading = true;
-				request("/appsystem/queryForPage", {
-					method: "POST",
-					formatJSon: true,
-					data: {
-							"systemCode": this.filters.systemCode,
-							"systemName": this.filters.systemName,
-							"pageNum": this.pageNum,
-							"pageSize": this.pageSize
+				request("/funcgroup/" + this.pageNum + "/" + this.pageSize, {
+					method: "GET",
+					//formatJSon: true,
+					param: {
+							"groupCode": this.query.groupCode,
+							"groupName": this.query.groupName
 						 }
 				}).then((data) => {
-					this.appSystem = data.list;
+					this.funcGroup = data.list;
 					this.total = data.total;
 					this.pageNum = data.pageNum;
 					this.pageSize = data.pageSize;
@@ -89,36 +74,36 @@ import request from '../../common/js/Utils/request.js';
 
 			handleCurrentChange:function(pageNum){
 				this.pageNum=pageNum;
-				this.getAppSystem();
+				this.getFuncGroup();
 			},	
 			//改变pageSize
 			handleSizeChange:function(pageSize){
 				this.pageSize=pageSize;
 				let lastPage = Math.ceil(this.total / pageSize);
 				if (this.pageNum <= lastPage){
-					this.getAppSystem();
+					this.getFuncGroup();
 				}
 			},
 			//显示新增界面
 			handleAdd: function () {
-				this.addFormVisible = true;
-				this.addForm = {};
+				this.openFormVisible = true;
+				this.openForm = {};
 			},
 			//显示编辑界面
 			handleEdit: function (index, row) {
-				this.addFormVisible = true;
-				this.addForm = row;
+				this.openFormVisible = true;
+				this.openForm = row;
 			},
 			save:function(){
-				this.$refs.addForm.validate((valid) => {
+				this.$refs.openForm.validate((valid) => {
 					if (valid) {
 						this.$confirm('确认提交吗？', '提示', {}).then(() => {
-							this.addLoading = true;
-							let para = Object.assign({}, this.addForm);
+							this.openLoading = true;
+							let para = Object.assign({}, this.openForm);
 							debugger
 							if (para.id == "" || para.id ==null || para.id =="undefined"  ){
 								//新增
-								request('/appsystem', {
+								request('/funcgroup', {
 									method: "Post",
 									data: para,
 									formatJSon: true,
@@ -126,13 +111,13 @@ import request from '../../common/js/Utils/request.js';
 									if (data > 0){
 										this.$message({type: 'success', message: "保存成功"})
 									}
-									this.getAppSystem();
+									this.getFuncGroup();
 								}).catch(
 										
 								)
 							}else{
 								//编辑
-								request("/appsystem/" + para.id, {
+								request("/funcgroup/" + para.id, {
 									method: "PUT",
 									data: para,
 									formatJSon: true,
@@ -140,13 +125,13 @@ import request from '../../common/js/Utils/request.js';
 									if (data > 0){
 										this.$message({type: 'success', message: "保存成功"})
 									}
-									this.getAppSystem();
+									this.getFuncGroup();
 								}).catch(
 										
 								)
 							}
-							this.addFormVisible = false;
-							this.addLoading = false
+							this.openFormVisible = false;
+							this.openLoading = false
 						});
 					}
 				});
@@ -158,14 +143,14 @@ import request from '../../common/js/Utils/request.js';
 				}).then(() => {
 					this.listLoading = true;
 					let para = { id: row.id };
-					request("/appsystem/" + para.id, {
+					request("/funcgroup/" + para.id, {
 						method: "DELETE",
 						formatJSon: true,
 					}).then((data) => {
 						if (data > 0){
 							this.$message({type: 'success', message: "删除成功"})
 						}
-						this.getAppSystem();
+						this.getFuncGroup();
 					}).catch()(
 
 					)
@@ -180,7 +165,6 @@ import request from '../../common/js/Utils/request.js';
 			selsChange: function (sels) {
 				this.sels = sels;
 			},
-
 			//批量删除
 			batchDelete: function () {
 				var ids = this.sels.map(item => item.id).toString();
@@ -189,14 +173,14 @@ import request from '../../common/js/Utils/request.js';
 				}).then(() => {
 					this.listLoading = true;
 					let para = { ids: ids };
-					request("/appsystem/" + para.ids, {
+					request("/funcgroup/" + para.ids, {
 						method: "DELETE",
 						formatJSon: true,
 					}).then((data) => {
 						if (data > 0){
 							this.$message({type: 'success', message: "删除成功"})
 						}
-						this.getAppSystem();
+						this.getFuncGroup();
 					}).catch()(
 
 					)
@@ -204,11 +188,23 @@ import request from '../../common/js/Utils/request.js';
 				}).catch(() => {
 
 				});
-			}
+			},
+			expandChange:function(row,status){
+				if(status){
+					request("/systemFunc" + "/" + row.id, {
+						method: "GET",
+					}).then((data) => {
+						this.appSystemFunc = data;
+					}).catch(
+							
+					)
+				}
 
+			}
+			  
 		},
 		
 		mounted() {
-			this.getAppSystem();
+			this.getFuncGroup();
 		}
 	}

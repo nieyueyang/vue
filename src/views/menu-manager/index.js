@@ -1,7 +1,7 @@
 import util from '../../common/js/Utils/util'
 	//import NProgress from 'nprogress'
 import { getUserListPage, removeUser, batchRemoveUser, editUser, addUser } from '../../api/api';
-import {axiosGet} from '../../utils/request.js';
+import {axiosGet} from '../../common/js/Utils/request.js';
 
 	export default {
 		data() {

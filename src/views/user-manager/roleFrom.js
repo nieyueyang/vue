@@ -1,5 +1,5 @@
 import util from '../../common/js/Utils/util'
-import request from '../../utils/request.js';
+import request from '../../common/js/Utils/request.js';
 
 	export default {
 		data() {

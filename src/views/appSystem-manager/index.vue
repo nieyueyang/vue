@@ -62,7 +62,7 @@
 				<!--新增/编辑界面-->
 		<el-dialog title="新增" v-model="addFormVisible" :close-on-click-modal="false">
 			<el-form :model="addForm" label-width="80px" :rules="addFormRules" ref="addForm" >
-				<el-input v-model="addForm.id"  size="small"></el-input>
+				<el-input v-model="addForm.id" v-if="false"  size="small"></el-input>
 				<el-row >
 					<el-col :span="10" >
 						<el-form-item label="系统编码" prop="systemCode">

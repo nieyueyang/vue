@@ -16,11 +16,7 @@
 </template>
 
 <script>
-  //import { requestLogin } from '../api/api';
-  //import request from '../utils/request.js';
-  import { axiosPost } from '../utils/request.js';
-  //import qs from 'querystring'
-
+  import { axiosPost } from '../common/js/Utils/request.js';
 
   export default {
     data() {
